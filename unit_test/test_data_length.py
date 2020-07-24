@@ -9,12 +9,12 @@ class MyTest(unittest.TestCase):
     def test_check_length_with_valid_value(self):
         data_col = pd.Series(['a', 'b', 'a', 'a', 'b', 'b', 'b', 'a', 'c', 'c', 'c', 'c'])
 
-        #TODO: call your function to check data_col with threshold=0.9
+        #call function to check data_col with threshold=0.9
 
         self.assertEqual(result, 'OK')
         self.assertEqual(len(df_detail), 0)
 
-    # TODO: write your unittest function here
+    #write unittest function here
 
 
 if __name__ == '__main__':

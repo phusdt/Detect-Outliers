@@ -10,16 +10,15 @@ class MyTest(unittest.TestCase):
     def test_check_value_range_with_na_value(self):
         data_col = pd.Series(['a', 'b', 'a', 'a', 'b', 'b', 'b', 'a', 'c', 'c', 'c', 'c'])
 
-
-        #TODO: call your function to check data_col with threshold_range_z_score = 15, threshold_range_iqr=1.5
-
+        #call function to check data_col with threshold_range_z_score = 15, threshold_range_iqr=1.5
+        check_value_range(data_col, 15, 1.5)
         self.assertEqual(result, 'NA')
         self.assertEqual(len(abnormal_data_details), 0)
 
     def test_check_value_range_with_empty_value(self):
         data_col = pd.Series([])
-        #TODO: call your function to check data_col with threshold_range_z_score = 15, threshold_range_iqr=1.5
-
+        # call function to check data_col with threshold_range_z_score = 15, threshold_range_iqr=1.5
+        check_value_range(data_col, 15, 1.5)
         self.assertEqual(result, 'OK')
         self.assertEqual(len(abnormal_data_details), 0)
 
