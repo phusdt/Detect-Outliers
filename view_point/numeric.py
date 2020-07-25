@@ -46,5 +46,3 @@ def check_numeric(data_col, threshold):
 
 
 
-
-

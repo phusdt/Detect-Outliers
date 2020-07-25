@@ -49,5 +49,5 @@ class ListThreshold(object):
 
 
 class Config(object):
-    CONFIG_FOLDER = '\config'
-    CONFIG_FILENAME = '\DetectOutlier.yml'
+    CONFIG_FOLDER = '/config'
+    CONFIG_FILENAME = '/DetectOutlier.yml'

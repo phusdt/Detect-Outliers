@@ -31,6 +31,7 @@ def read_config_file(config_file):
     :param config_file: File's path.
     :return: None.
     """
+
     if not os.path.exists(config_file):
         # Argument parse uses the ArgumentTypeError to give a rejection message like:
         # Error: argument input: x does not exist.
@@ -78,7 +79,8 @@ def check_view_points(config, input_folder, output_folder, encoding):
     logging.info(str(start_time) + "Begin check files:   ")
 
     ###########################################################################
-    #TODO: Read all files in input_folder. Write your function and call here
+    #Read all files in input_folder
+    df = pd.read_csv('data/DBDetectOutlier.csv')
 
     #TODO: Check all columns in all files
 
@@ -144,5 +146,4 @@ if __name__ == '__main__':
 
     # call main function
     check_view_points(FLAGS.config, FLAGS.directory, FLAGS.output_folder, FLAGS.encoding)
-
     print(' Done.')
