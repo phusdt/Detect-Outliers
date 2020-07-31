@@ -17,6 +17,7 @@ from view_point.data_length import check_length
 from view_point.value_range import check_value_range
 
 from utils.constant import Constant, ErrorMessage, ListThreshold, Config
+from utils.utility import  find_csv_file_names, find_file_name_err, write_error_file
 
 FLAGS = None
 
@@ -80,10 +81,26 @@ def check_view_points(config, input_folder, output_folder, encoding):
 
     ###########################################################################
     #Read all files in input_folder
-    df = pd.read_csv('data/DBDetectOutlier.csv')
+    #filled in filenames variable
+    filenames = find_csv_file_names(input_folder)
 
-    #TODO: Check all columns in all files
+    data = [] #use to add data from input_folder
+    columns = [] #use to add columns's name
 
+    if filenames: #if in input_folder exist csv file
+        for filename in filenames:
+            df = pd.read_csv(input_folder + '/' + filename)
+            data.append(df)
+            columns.append(df.columns)
+    else: #if in input_folder doestn't exist any csv file
+        find_file_name_err(input_folder)
+
+    #Check all columns in all files
+    for col in columns:
+        pd.to_csv(check_numeric(col, ListThreshold.CHECK_NUMERIC))
+        check_value_range(col, ListThreshold.THRESHOLD_ZSCORE, ListThreshold.THRESHOLD_IQR)
+        check_length(col, ListThreshold.CHECK_LENGTH)
+        check_category(col, ListThreshold.CHECK_CATEGORY)
     #TODO: Call function to save the output
     ###########################################################################
 

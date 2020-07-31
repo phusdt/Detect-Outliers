@@ -12,35 +12,41 @@ def check_numeric(data_col, threshold):
     :return: result (OK, NG, NA), k (numbers of numeric rows), N (total values),
     abnormal_data_details (DataFrame contains values and indexes of invalid numeric).
      """
-    #create dictionnary to constains values and indexes of invalid numeric
+    # create dictionnary to constains values and indexes of invalid numeric
     abnormal_data_details = {'Indexes': [], 'Values': []}
 
-    indexes = []
-    values = []
-    #for loop to fill data to 2 list (indexes and values)
+    indexes = []  # indexes of invalid numeric
+    values = []  # values of invalid numeric
+
+    # for loop to fill data to 2 list (indexes and values)
     for index, value in data_col.iteritems():
+        value = str(value)
         row_isnumeric = value.isnumeric()
         if not row_isnumeric:
             indexes.append(index)
             values.append(value)
 
-    #update value in dict and change into data frame
+    # update value in dict and change into data frame
     abnormal_data_details['Indexes'] = indexes
     abnormal_data_details['Values'] = values
     abnormal_data_details = pd.DataFrame(abnormal_data_details)
 
     result = 'NA'
-    k = len(values)  # number of numeric rows
+    k = len(data_col) - len(values)  # number of numeric rows: total_row - abnormal_row
     N = len(data_col)  # total values
-    #Condition to get result by the ratio of k/N and theshold
-    if k/N >= threshold and k < N:
+    ratio = k/N
+    # Condition to get result by the ratio of k/N and theshold
+    if ratio >= threshold and k < N:
         result = 'NG'
     elif k == N:
         result = 'OK'
 
+    #write to file
+    with open('SummaryOutput.txt','w') as f:
+        f.write(str(ratio))
+        f.close()
+
     return result, k, N, abnormal_data_details
-
-
 
 
 
