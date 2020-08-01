@@ -4,14 +4,16 @@ import numpy as np
 import math
 from utils.constant import Constant
 
-
+##############################################################################
+# build mean and stdev function
+# in numpy, we already had build-in function for mean and standard deviation - np.mean() and np.std()
+# I checked those 2 func, it running well and just similar to numpy build-in func
 def mean(data_col):
     return (sum(data_col) / len(data_col))
-
-
 def stdev(data):
     mu = mean(data)
     return math.sqrt(sum([(point - mu) ** 2 for point in data]) / len(data))
+##############################################################################
 
 
 def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
@@ -30,6 +32,7 @@ def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
     # check numeric in data_col
     for row in data_col:
         # If the column has a value isn't numeric, return 'NA'
+        row = str(row)
         if not row.isnumeric():
             return result
 
@@ -88,6 +91,3 @@ def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
         result = 'OK'
 
     return result
-
-
-

@@ -84,24 +84,20 @@ def check_view_points(config, input_folder, output_folder, encoding):
     #filled in filenames variable
     filenames = find_csv_file_names(input_folder)
 
-    data = [] #use to add data from input_folder
-    columns = [] #use to add columns's name
-
     if filenames: #if in input_folder exist csv file
         for filename in filenames:
-            df = pd.read_csv(input_folder + '/' + filename)
-            data.append(df)
-            columns.append(df.columns)
+            df = pd.read_csv(input_folder + '/' + filename, dtype='object')
+            # Check all columns in all files
+            for col in df.columns:
+                check_numeric(col, ListThreshold.CHECK_NUMERIC)
+                check_value_range(col, ListThreshold.THRESHOLD_ZSCORE, ListThreshold.THRESHOLD_IQR)
+                check_length(col, ListThreshold.CHECK_LENGTH)
+                check_category(col, ListThreshold.CHECK_CATEGORY)
     else: #if in input_folder doestn't exist any csv file
         find_file_name_err(input_folder)
 
-    #Check all columns in all files
-    for col in columns:
-        pd.to_csv(check_numeric(col, ListThreshold.CHECK_NUMERIC))
-        check_value_range(col, ListThreshold.THRESHOLD_ZSCORE, ListThreshold.THRESHOLD_IQR)
-        check_length(col, ListThreshold.CHECK_LENGTH)
-        check_category(col, ListThreshold.CHECK_CATEGORY)
-    #TODO: Call function to save the output
+    #Call function to save the output
+
     ###########################################################################
 
 def init():

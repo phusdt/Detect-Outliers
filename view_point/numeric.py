@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from utils.constant import Constant
+from utils.utility import find_summary_file
 
 
 def check_numeric(data_col, threshold):
@@ -34,20 +35,14 @@ def check_numeric(data_col, threshold):
     result = 'NA'
     k = len(data_col) - len(values)  # number of numeric rows: total_row - abnormal_row
     N = len(data_col)  # total values
-    ratio = k/N
     # Condition to get result by the ratio of k/N and theshold
-    if ratio >= threshold and k < N:
+    ratio = k / N
+    if k / N >= threshold and k < N:
         result = 'NG'
     elif k == N:
         result = 'OK'
 
-    #write to file
-    with open('SummaryOutput.txt','w') as f:
-        f.write(str(ratio))
-        f.close()
-
     return result, k, N, abnormal_data_details
-
 
 
 

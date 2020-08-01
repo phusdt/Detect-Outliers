@@ -51,6 +51,17 @@ def write_error_file(file_name_error, output_dir):
 
 #######################################################
 
-# TODO: Write your common functions here
-
+#common functions
+def find_summary_file(input_folder, suffix='txt'):
+    """
+    Find sumamary file
+    :param input_folder: Folder path
+    :param suffix: suffix
+    :return: True or False
+    """
+    filenames = listdir(input_folder)
+    [filename for filename in filenames if filename.endswith(suffix)]
+    if filenames:
+        return True
+    return False
 #######################################################

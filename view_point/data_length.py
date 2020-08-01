@@ -3,6 +3,7 @@ import pandas as pd
 from utils.constant import Constant
 
 
+
 def check_length(data_col, threshold_length):
     """
     The function checks the length of the data column.
@@ -18,12 +19,17 @@ def check_length(data_col, threshold_length):
     # Setting up a new value chain is the length of each value in the original string
     Li = []
     for li in data_col:
-        Li.append(len(li))  # add length of each value in data_col
+        Li.append(len(str(li)))  # add length of each value in data_col
+
+
     list_value = {str(i): Li.count(i) for i in Li}
+
     max_ki = max(list_value.values())
+
+
     if max_ki / N >= threshold_length and max_ki / N < 1:
         result = 'NG'
-    elif max_ki / N == threshold_length:
+    elif max_ki / N == 1:
         result = 'OK'
 
     return result

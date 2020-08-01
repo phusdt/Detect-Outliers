@@ -13,6 +13,7 @@ def stdev(data):
     return math.sqrt(sum([(point - mu) ** 2 for point in data]) / len(data))
 
 
+
 def check_category(data_col, threshold_category):
     """
     The function checks category of the data column
@@ -44,7 +45,7 @@ def check_category(data_col, threshold_category):
 
     if len(outliers) == 0:
         result = 'OK'
-    else:
+    elif len(outliers) > 0:
         result = 'NG'
 
     return result
