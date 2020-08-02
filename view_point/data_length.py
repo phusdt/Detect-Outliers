@@ -21,9 +21,10 @@ def check_length(data_col, threshold_length):
     for li in data_col:
         Li.append(len(str(li)))  # add length of each value in data_col
 
-
+    # For each unique value, count the number of records with the length
     list_value = {str(i): Li.count(i) for i in Li}
 
+    #get the max of list count values
     max_ki = max(list_value.values())
 
 
@@ -32,5 +33,5 @@ def check_length(data_col, threshold_length):
     elif max_ki / N == 1:
         result = 'OK'
 
-    return result
+    return result, max_ki, N
 

@@ -32,11 +32,12 @@ def check_numeric(data_col, threshold):
     abnormal_data_details['Values'] = values
     abnormal_data_details = pd.DataFrame(abnormal_data_details)
 
+
     result = 'NA'
     k = len(data_col) - len(values)  # number of numeric rows: total_row - abnormal_row
     N = len(data_col)  # total values
-    # Condition to get result by the ratio of k/N and theshold
-    ratio = k / N
+
+    # Condition to get result by the ratio of k/N and threshold
     if k / N >= threshold and k < N:
         result = 'NG'
     elif k == N:

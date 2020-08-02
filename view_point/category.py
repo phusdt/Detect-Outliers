@@ -48,4 +48,4 @@ def check_category(data_col, threshold_category):
     elif len(outliers) > 0:
         result = 'NG'
 
-    return result
+    return result, Pmean, Pstdev

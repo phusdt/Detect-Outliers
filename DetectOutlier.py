@@ -10,6 +10,7 @@ import pandas as pd
 import yaml
 import logging
 import datetime
+import csv
 
 from view_point.numeric import check_numeric
 from view_point.category import check_category
@@ -62,6 +63,25 @@ def check_folder_exist(folder_path):
         raise argparse.ArgumentTypeError(ErrorMessage.ERROR_NOT_EXIST.format(folder_path))
     return folder_path
 
+#def write_dict(dict_data, filename, column_name, viewpoint, result, summary):
+
+
+def write_summary(output_folder,dict_data):
+
+    csv_columns = ['file_name'
+                  'column_name',
+                  'viewpoint',
+                  'result',
+                  'summary']
+
+    path = output_folder + '/Summary_detect_outlier.csv'
+    if check_folder_exist(path):
+        csv_file = 'Summary_detect_outlier.csv'
+        with open(csv_file, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            for data in dict_data:
+                writer.writerow(data)
 
 def check_view_points(config, input_folder, output_folder, encoding):
     """
@@ -84,20 +104,56 @@ def check_view_points(config, input_folder, output_folder, encoding):
     #filled in filenames variable
     filenames = find_csv_file_names(input_folder)
 
-    if filenames: #if in input_folder exist csv file
+    # if in input_folder exist csv file
+    if filenames:
+        threshold = read_config_file(config_path) #get dictionary of threshold in yml file
         for filename in filenames:
+
+            file_names = []
+            column_names = []
+            viewpoints = []
+            results = []
+            summaries = []
             df = pd.read_csv(input_folder + '/' + filename, dtype='object')
             # Check all columns in all files
             for col in df.columns:
-                check_numeric(col, ListThreshold.CHECK_NUMERIC)
-                check_value_range(col, ListThreshold.THRESHOLD_ZSCORE, ListThreshold.THRESHOLD_IQR)
-                check_length(col, ListThreshold.CHECK_LENGTH)
-                check_category(col, ListThreshold.CHECK_CATEGORY)
+                check_numeric_values = check_numeric(df[col], threshold['threshold'][ListThreshold.CHECK_NUMERIC])
+                check_range_values = check_value_range(df[col], threshold['threshold'][ListThreshold.THRESHOLD_ZSCORE],
+                                                         threshold['threshold'][ListThreshold.THRESHOLD_IQR])
+                check_length_values = check_length(df[col], threshold['threshold'][ListThreshold.CHECK_LENGTH])
+                check_category_values = check_category(df[col], threshold['threshold'][ListThreshold.CHECK_CATEGORY])
+
+                for i in range(4):
+                    file_names.append(filename)
+                    column_names.append(col)
+
+                viewpoints.append('checkNumeric')
+                viewpoints.append('checkRange')
+                viewpoints.append('checkLength')
+                viewpoints.append('checkCategory')
+
+                results.append(check_numeric_values[0])
+                results.append(check_range_values[0])
+                results.append(check_length_values[0])
+                results.append(check_category_values[0])
+
+                summaries.append(str(check_numeric_values[1]) + '/' + str(check_numeric_values[2]))
+                summaries.append(str(check_range_values[1]) + '/' + str(check_range_values[2]))
+                summaries.append(str(check_length_values[1]) + '/' + str(check_length_values[2]))
+                summaries.append(str(check_category_values[1]) + '/' + str(check_category_values[2]))
+            dict_data = {'file_name': file_names,
+                         'column_name': column_names,
+                         'viewpoint': viewpoints,
+                         'result': results,
+                         'summary': summaries
+                         }
+            df = pd.DataFrame(dict_data, columns=['file_name','column_name','viewpoint','result','summary'] )
+            df.to_csv(output_folder+'/Summary_detect_outlier.csv', index = None, header=True)
+
     else: #if in input_folder doestn't exist any csv file
         find_file_name_err(input_folder)
 
     #Call function to save the output
-
     ###########################################################################
 
 def init():

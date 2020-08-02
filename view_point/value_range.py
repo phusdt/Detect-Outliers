@@ -24,6 +24,9 @@ def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
     :param threshold_range_iqr: threshold_z_iqr of the length function
     :return: result 'OK', 'NA', 'NG'
     """
+
+    Vmean = 0
+    Vstdev = 0
     # set result's default as 'NA'
     result = 'NA'
     # numbers of outliers in data_col
@@ -34,7 +37,7 @@ def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
         # If the column has a value isn't numeric, return 'NA'
         row = str(row)
         if not row.isnumeric():
-            return result
+            return result, Vmean, Vstdev
 
     # If the column has 100% value is numeric
     # convert into integer
@@ -90,4 +93,4 @@ def check_value_range(data_col, threshold_range_z_score, threshold_range_iqr):
     elif len(outliers) == 0:
         result = 'OK'
 
-    return result
+    return result, Vmean, Vstdev
