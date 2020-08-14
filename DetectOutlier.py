@@ -64,13 +64,9 @@ def check_folder_exist(folder_path):
     return folder_path
 
 
-def write_to_csv(output_folder, filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
-    #Initiation list for dict_data
-    file_names = []
-    column_names = []
-    viewpoints = []
-    results = []
-    summaries = []
+def append_data(file_names, column_names, viewpoints, results, summaries,
+    filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
+
 
     #Fill the list with the corresponding values,
     #For each column, we going to check 4 view points.
@@ -93,15 +89,8 @@ def write_to_csv(output_folder, filename, column_name, check_numeric_values, che
     summaries.append(str(check_length_values[1]) + '/' + str(check_length_values[2]))
     summaries.append(str(check_category_values[1]) + '/' + str(check_category_values[2]))
 
-    #create a dictionnary with the keys will be the columns's name of data frame
-    dict_data = {'file_name': file_names,
-                 'column_name': column_names,
-                 'viewpoint': viewpoints,
-                 'result': results,
-                 'summary': summaries
-                 }
+
     #call export function to csv from the data
-    export_summary(output_folder, dict_data)
 
 def export_summary(output_folder,dict_data):
     """
@@ -137,9 +126,13 @@ def check_view_points(config, input_folder, output_folder, encoding):
     # if in input_folder exist csv file
     if filenames:
         threshold = read_config_file(config_path) #get dictionary of threshold in yml file
+        # Initiation list for dict_data
+        file_names = []
+        column_names = []
+        viewpoints = []
+        results = []
+        summaries = []
         for filename in filenames:
-
-
             df = pd.read_csv(input_folder + '/' + filename, dtype='object')
             # Check all columns in all files
             for col in df.columns:
@@ -148,12 +141,16 @@ def check_view_points(config, input_folder, output_folder, encoding):
                                                          threshold['threshold'][ListThreshold.THRESHOLD_IQR])
                 check_length_values = check_length(df[col], threshold['threshold'][ListThreshold.CHECK_LENGTH])
                 check_category_values = check_category(df[col], threshold['threshold'][ListThreshold.CHECK_CATEGORY])
-            # Function to export csv file
-            write_to_csv(output_folder, filename, col, check_numeric_values
-                                                        ,check_range_values
-                                                        ,check_length_values
-                                                        ,check_category_values)
-
+                # Function to export csv file
+                append_data(file_names, column_names, viewpoints, results, summaries,
+                            filename, col, check_numeric_values, check_range_values, check_length_values,check_category_values)
+        dict_data = {'file_name':file_names,
+                     'column_name':column_names,
+                     'view_point':viewpoints,
+                     'result':results,
+                     'summary':summaries
+        }
+        export_summary(output_folder, dict_data)
     else: #if in input_folder doestn't exist any csv file
         find_file_name_err(input_folder)
     ###########################################################################
