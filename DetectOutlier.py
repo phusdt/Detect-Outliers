@@ -64,9 +64,13 @@ def check_folder_exist(folder_path):
     return folder_path
 
 
-def append_data(file_names, column_names, viewpoints, results, summaries,
-    filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
-
+def append_data(output_folder, filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
+    # Initiation list for dict_data
+    file_names = []
+    column_names = []
+    viewpoints = []
+    results = []
+    summaries = []
 
     #Fill the list with the corresponding values,
     #For each column, we going to check 4 view points.
@@ -89,8 +93,30 @@ def append_data(file_names, column_names, viewpoints, results, summaries,
     summaries.append(str(check_length_values[1]) + '/' + str(check_length_values[2]))
     summaries.append(str(check_category_values[1]) + '/' + str(check_category_values[2]))
 
+    #fill data to dict
+    dict_data = {'file_name': file_names,
+                 'column_name': column_names,
+                 'view_point': viewpoints,
+                 'result': results,
+                 'summary': summaries
+                 }
 
     #call export function to csv from the data
+    exist_csv = find_csv_file_names(output_folder, suffix='csv')
+    if exist_csv:
+        myFile = output_folder + '/Summary_detect_outlier.csv'
+        # add row to CSV file
+        with open(myFile, "a") as f:
+            writer = csv.DictWriter(f, fieldnames=dict_data.keys())
+            for i in range(4):
+                writer.writerow({'file_name': file_names[i],
+                                 'column_name': column_names[i],
+                                 'view_point': viewpoints[i],
+                                 'result': results[i],
+                                 'summary': summaries[i]
+                                 })
+    else:
+        export_summary(output_folder,dict_data)
 
 def export_summary(output_folder,dict_data):
     """
@@ -126,12 +152,7 @@ def check_view_points(config, input_folder, output_folder, encoding):
     # if in input_folder exist csv file
     if filenames:
         threshold = read_config_file(config_path) #get dictionary of threshold in yml file
-        # Initiation list for dict_data
-        file_names = []
-        column_names = []
-        viewpoints = []
-        results = []
-        summaries = []
+
         for filename in filenames:
             df = pd.read_csv(input_folder + '/' + filename, dtype='object')
             # Check all columns in all files
@@ -142,15 +163,9 @@ def check_view_points(config, input_folder, output_folder, encoding):
                 check_length_values = check_length(df[col], threshold['threshold'][ListThreshold.CHECK_LENGTH])
                 check_category_values = check_category(df[col], threshold['threshold'][ListThreshold.CHECK_CATEGORY])
                 # Function to export csv file
-                append_data(file_names, column_names, viewpoints, results, summaries,
+                append_data(output_folder,
                             filename, col, check_numeric_values, check_range_values, check_length_values,check_category_values)
-        dict_data = {'file_name':file_names,
-                     'column_name':column_names,
-                     'view_point':viewpoints,
-                     'result':results,
-                     'summary':summaries
-        }
-        export_summary(output_folder, dict_data)
+
     else: #if in input_folder doestn't exist any csv file
         find_file_name_err(input_folder)
     ###########################################################################
