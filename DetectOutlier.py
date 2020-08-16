@@ -64,7 +64,12 @@ def check_folder_exist(folder_path):
     return folder_path
 
 
-def append_data(output_folder, filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
+def write_to_csv(output_folder, filename, column_name, check_numeric_values, check_range_values, check_length_values, check_category_values):
+    """
+        This func use to write data to Summary file - csv file
+        :param: data which use to fill to csv file
+        :output: export to csv file - or append to csv file is file existed already
+        """
     # Initiation list for dict_data
     file_names = []
     column_names = []
@@ -78,22 +83,25 @@ def append_data(output_folder, filename, column_name, check_numeric_values, chec
         file_names.append(filename)
         column_names.append(column_name)
 
+    #append 4 points of view (4 row in csv file - view_point column)
     viewpoints.append('checkNumeric')
     viewpoints.append('checkRange')
     viewpoints.append('checkLength')
     viewpoints.append('checkCategory')
 
+    #append 4 result in points of view (4 row in csv file - result column)
     results.append(check_numeric_values[0])
     results.append(check_range_values[0])
     results.append(check_length_values[0])
     results.append(check_category_values[0])
 
+    #append 4 summary in points of view (4 row in csv file - summary column)
     summaries.append(str(check_numeric_values[1]) + '/' + str(check_numeric_values[2]))
     summaries.append(str(check_range_values[1]) + '/' + str(check_range_values[2]))
     summaries.append(str(check_length_values[1]) + '/' + str(check_length_values[2]))
     summaries.append(str(check_category_values[1]) + '/' + str(check_category_values[2]))
 
-    #fill data to dict
+    # fill data to dict
     dict_data = {'file_name': file_names,
                  'column_name': column_names,
                  'view_point': viewpoints,
@@ -101,13 +109,16 @@ def append_data(output_folder, filename, column_name, check_numeric_values, chec
                  'summary': summaries
                  }
 
-    #call export function to csv from the data
+    #check if csv summary file existed or not
     exist_csv = find_csv_file_names(output_folder, suffix='csv')
+    #if csv summary file existed
     if exist_csv:
-        myFile = output_folder + '/Summary_detect_outlier.csv'
-        # add row to CSV file
+        myFile = output_folder + '/Summary_detect_outlier.csv' #path of summary file
+        #open csv file to append data
         with open(myFile, "a") as f:
-            writer = csv.DictWriter(f, fieldnames=dict_data.keys())
+            fieldnames = dict_data.keys()
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            # add 4 row to CSV file
             for i in range(4):
                 writer.writerow({'file_name': file_names[i],
                                  'column_name': column_names[i],
@@ -115,6 +126,7 @@ def append_data(output_folder, filename, column_name, check_numeric_values, chec
                                  'result': results[i],
                                  'summary': summaries[i]
                                  })
+    #else: summary file is not exist yet
     else:
         export_summary(output_folder,dict_data)
 
@@ -163,8 +175,12 @@ def check_view_points(config, input_folder, output_folder, encoding):
                 check_length_values = check_length(df[col], threshold['threshold'][ListThreshold.CHECK_LENGTH])
                 check_category_values = check_category(df[col], threshold['threshold'][ListThreshold.CHECK_CATEGORY])
                 # Function to export csv file
-                append_data(output_folder,
-                            filename, col, check_numeric_values, check_range_values, check_length_values,check_category_values)
+                write_to_csv(output_folder,filename,
+                             col,
+                             check_numeric_values,
+                             check_range_values,
+                             check_length_values,
+                             check_category_values)
 
     else: #if in input_folder doestn't exist any csv file
         find_file_name_err(input_folder)

@@ -46,4 +46,4 @@ DBDetectOutlier.csv,T_DT,checkCategory,NG,1.5/1.5
 DBDetectOutlier.csv,MAIL_STOP_DT,checkNumeric,NA,0/42
 DBDetectOutlier.csv,MAIL_STOP_DT,checkRange,NA,0/0
 DBDetectOutlier.csv,MAIL_STOP_DT,checkLength,NA,29/42
-DBDetectOutlier.csv,MAIL_STOP_DT,checkCategory,NG,2.6/3.7202150475476548
+DBDetectOutlier.csv,MAIL_STOP_DT,checkCategory,NG,2.6/3.720215047547655
